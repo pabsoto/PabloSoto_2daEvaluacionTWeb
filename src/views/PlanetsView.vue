@@ -1,0 +1,51 @@
+<template>
+    <div>
+      <h1>Planetas de Star Wars</h1>
+      <div v-if="loading">Cargando...</div>
+      <div v-if="error">{{ errorMessage }}</div>
+      <div v-if="planets.length > 0">
+        <div v-for="planet in planets" :key="planet.name">
+          <h2>{{ planet.name }}</h2>
+          <p>Clima: {{ planet.climate || 'No disponible' }}</p>
+          <p>Terreno: {{ planet.terrain || 'No disponible' }}</p>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  
+  export default {
+    name: 'PlanetsView',
+    data() {
+      return {
+        planets: [],
+        loading: true,
+        error: false,
+        errorMessage: ''
+      };
+    },
+    mounted() {
+      this.fetchPlanets();
+    },
+    methods: {
+      async fetchPlanets() {
+        try {
+          const response = await axios.get('https://swapi.tech/api/planets/');
+          console.log(response.data.results);
+          this.planets = response.data.results;
+          this.loading = false;
+        } catch (error) {
+          this.loading = false;
+          this.error = true;
+          this.errorMessage = 'No se pudieron cargar los planetas. Intenta más tarde.';
+        }
+      }
+    }
+  };
+  </script>
+  
+  <style scoped>
+  </style>
+  
